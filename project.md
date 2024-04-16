@@ -23,7 +23,7 @@ _id |||| _id
 user |||| { _id, name: String }
 image |||| [ String, ... ]
 desc |||| String
-price |||| { totalMonthlyRent, maintainanceCost, security, brokerage }
+price |||| { monthlyRent, maintainanceCost, security, brokerage }
 propertyType |||| "1/2/3/4/5 bhk"
 furnishing |||| "full/semi/un"
 preferredTenant |||| [ String, ... ] (bachelors, married, girls, boys, family, studio, couples)
