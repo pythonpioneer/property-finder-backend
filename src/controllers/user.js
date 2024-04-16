@@ -1,5 +1,6 @@
 // importing requirements
-const { generatePassword } = require("../middlewares/auth/passwordMiddleware");
+const { generateToken } = require("../middlewares/auth/authMiddleware");
+const { generatePassword, comparePassword } = require("../middlewares/auth/passwordMiddleware");
 const User = require("../models/User.model");
 
 
@@ -39,5 +40,43 @@ const registerUser = async (req, res) => {
     }
 }
 
+// to login a registerd user
+const loginUser = async (req, res) => {
+    try {
+        // fetching data from request body
+        const password = req.body.password.trim();
+        const email = req.body.email.toLowerCase();
+
+        // check that the user exists
+        const user = await User.findOne({ email });
+        if (!user) return res.status(401).json({ status: 401, message: "Invalid Credentials!" });  // use not found here but returning invalid credentials for security purpose
+
+        // now, compare the password of the existing user with the current user
+        const isPasswordMatched = comparePassword(password, user.password);
+        if (!isPasswordMatched) return res.status(401).json({ status: 401, message: "Invalid Credentials!" });  // password not matched
+
+        // now, sending user id as payload, accesssing data using id is easier
+        const payloadData = {
+            user: {
+                id: user.id
+            },
+        };
+
+        // generate the authentication user
+        const authToken = generateToken(payloadData);
+
+        // also save the token inside db
+        user.refreshToken = authToken;
+        await user.save();
+
+        // return the response to the user as success
+        return res.status(200).json({ status: 200, message: 'User Logged-in Successfully', "auth-token": authToken });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+
 // exporting all the controllers functions
-module.exports = { registerUser };
+module.exports = { registerUser, loginUser };
