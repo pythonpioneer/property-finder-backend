@@ -41,7 +41,6 @@ const propertySchema = new Schema({
     area: {  // the area calculated in sqft.
         type: Number,
         required: true,
-        min: 81
     },
     flooring: {
         type: String,
