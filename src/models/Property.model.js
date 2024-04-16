@@ -9,13 +9,15 @@ const propertySchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true,
     },
-    image: {
+    images: {  // cloudinary uri
         type: [ String ],
         required: true,
     },
     desc: {
         type: String,
         required: true,
+        min: [4, 'Description must be atleast 4 characters long.'],
+        max: [300, 'Description can not be longer than 300 characters.']
     },
     price: {
         type: priceSchema,
@@ -38,7 +40,8 @@ const propertySchema = new Schema({
     }],
     area: {  // the area calculated in sqft.
         type: Number,
-        required: true
+        required: true,
+        min: 81
     },
     flooring: {
         type: String,
@@ -57,7 +60,8 @@ const propertySchema = new Schema({
 const priceSchema = new Schema({
     monthlyRent: {
         type: Number,
-        required: true
+        required: true,
+        min: 1
     },
     maintenanceCost: {
         type: Number,
@@ -65,7 +69,7 @@ const priceSchema = new Schema({
     },
     security: {
         type: Number,
-        required: true
+        default: 0
     },
     brokerage: {
         type: Number,
