@@ -8,7 +8,8 @@ const User = require("../models/User.model");
 const registerUser = async (req, res) => {
     try {
         // fetching the data from the request body
-        const { name, contactNumber } = req.body;
+        const name = req.body.name.trim();
+        const contactNumber = req.body.contactNumber;
         const password = req.body.password.trim();
         const email = req.body.email.toLowerCase();
 
@@ -118,6 +119,58 @@ const getUserDetails = async (req, res) => {
     }
 }
 
+// to update the user details like name, email and contactNumber
+const updateContact = async (req, res) => {
+    try {
+        // fetch the user details from the body
+        const { name, contactNumber, email } = req.body;
+
+        // check that the user exist or not
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found!" });
+
+        // fields to be updated
+        const updatedFields = {}
+
+        // finding possible fields to be updated
+        if (name) {
+            updatedFields.name = name.trim();
+        }
+        if (contactNumber) {
+
+            // check that the user with this email exists
+            const newUser = await User.findOne({ contactNumber });
+            if (newUser) return res.status(400).json({ status: 400, message: "An User with this contact already exists"});
+
+            updatedFields.contactNumber = contactNumber;
+        }
+        if (email) {
+
+            // check that the user with this email exists
+            const newUser = await User.findOne({ email });
+            if (newUser) return res.status(400).json({ status: 400, message: "An User with this email already exists"});
+
+            updatedFields.email = email.toLowerCase();
+        }
+
+        // check that user wants to update something
+        let toBeUpdated = Object.keys(updatedFields).length > 0;
+
+        // checking fields that need to be updated
+        if (!toBeUpdated) return res.status(204).json({ status: 204, message: "There is nothing to update"})
+
+        // update the fields
+        Object.assign(user, updatedFields);
+        await user.save();
+
+        // now, send the user with updated message
+        return res.status(200).json({ status: 200, message: "User Updated Successfully", user });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // exporting all the controllers functions
-module.exports = { registerUser, loginUser, logoutUser, getUserDetails };
+module.exports = { registerUser, loginUser, logoutUser, getUserDetails, updateContact };
