@@ -2,6 +2,7 @@
 
 const { validateEmail } = require("./validateFields/emailField");
 const { validateString } = require("./validateFields/stringField");
+const { validateSpecificValues } = require("./validateFields/validateSpecificValues");
 
 
 // generating a validation array to validate registration fields
@@ -25,9 +26,10 @@ const validateUpdationFields = [
     ...validateString(['contactNumber'], true, { min: 10, max: 10 }, true),
 ];
 
+// genearte a validation array to validate the user type
+const validateUserTypeField = [
+    ...validateSpecificValues(['userType'], false, ['tenant', 'owner']),
+];
+
 // export all the validation array
-module.exports = { validateRegistrationFields, validateLoginFields, validateUpdationFields };
-
-
-
-
+module.exports = { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField };
