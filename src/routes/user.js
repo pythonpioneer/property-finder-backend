@@ -1,9 +1,10 @@
 // importing requirements
 const router = require('express').Router();
-const { registerUser, loginUser, logoutUser, getUserDetails, updateContact } = require('../controllers/user');
+const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType } = require('../controllers/user');
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
-const { validateRegistrationFields, validateLoginFields, validateUpdationFields } = require('../middlewares/validation/validationField');
+const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
+const { validate } = require('../models/User.model');
 
 
 // Route 1: To register user: '/api/v1/user/register' [using POST] (login not required)
@@ -20,6 +21,9 @@ router.get('/', fetchUser, getUserDetails);
 
 // Route 5: To update the logged in user: '/api/v1/user/contact' [using PATCH] (login required)
 router.patch('/contact', validateUpdationFields, validateValidationResult, fetchUser, updateContact);
+
+// Route 6: To update the logged in user type: '/api/v1/user/type' [using PATCH] (login required)
+router.patch('/type', validateUserTypeField, validateValidationResult, fetchUser, updateUserType);
 
 
 // exporting the router object

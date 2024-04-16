@@ -126,7 +126,7 @@ const updateContact = async (req, res) => {
         const { name, contactNumber, email } = req.body;
 
         // check that the user exist or not
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).select('-password -likedProperties -refreshToken');
         if (!user) return res.status(404).json({ status: 404, message: "User Not Found!" });
 
         // fields to be updated
@@ -171,6 +171,28 @@ const updateContact = async (req, res) => {
     }
 }
 
+// to update the role of the user
+const updateUserType = async (req, res) => {
+    try {
+        // fetch the user type from the request body
+        const { userType } = req.body;
+
+        // check that the user exist or not
+        const user = await User.findById(req.user.id).select('-password -likedProperties -refreshToken');
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found!" });
+
+        // update the user and save in db
+        user.userType = userType;
+        await user.save();
+
+        // respond the user with success response
+        return res.status(200).json({ status: 200, message: "User role updated", user });
+        
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // exporting all the controllers functions
-module.exports = { registerUser, loginUser, logoutUser, getUserDetails, updateContact };
+module.exports = { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType };
