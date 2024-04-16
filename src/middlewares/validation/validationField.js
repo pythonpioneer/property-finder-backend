@@ -18,9 +18,15 @@ const validateLoginFields = [
     ...validateString(['password'], false, { min: 6, max: 15 }),
 ]; 
 
+// generate a validation array to validate the update feilds
+const validateUpdationFields = [
+    ...validateEmail(['email'], true),
+    ...validateString(['name'], true, { min: 2, max: 30 }),
+    ...validateString(['contactNumber'], true, { min: 10, max: 10 }, true),
+];
 
 // export all the validation array
-module.exports = { validateRegistrationFields, validateLoginFields };
+module.exports = { validateRegistrationFields, validateLoginFields, validateUpdationFields };
 
 
 
