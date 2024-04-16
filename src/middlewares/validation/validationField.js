@@ -8,7 +8,8 @@ const { validateString } = require("./validateFields/stringField");
 const validateRegistrationField = [
     ...validateEmail(['email'], false),
     ...validateString(['name'], false, { min: 2, max: 30 }),
-    ...validateString(['password'], false, { min: 6, max: 15 })
+    ...validateString(['password'], false, { min: 6, max: 15 }),
+    ...validateString(['contactNumber'], false, { min: 10, max: 10 }, true),
 ];
 
 

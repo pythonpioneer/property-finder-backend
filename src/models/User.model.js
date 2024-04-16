@@ -10,6 +10,7 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         lowercase: true,
+        index: true,  // we will use this field frequently to search user
     },
     contactNumber: {
         type: String,
