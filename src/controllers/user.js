@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
             contactNumber,
             password: securePassword
         })
-            .then(user => {
+            .then(() => {
 
                 // send the success response to the user
                 return res.status(200).json({ status: 200, message: `User Registered Successfully` });
