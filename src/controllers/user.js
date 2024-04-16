@@ -77,6 +77,32 @@ const loginUser = async (req, res) => {
     }
 }
 
+// to logout the user
+const logoutUser = async (req, res) => {
+    try {
+
+        // check that the user exist or not
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found!" });
+
+        let message = "User Already Logged out!"
+
+        // logout the user by deleting token from db
+        if (user.refreshToken) {
+
+            user.refreshToken = null;
+            await user.save();
+            message = "User Logout Successfully!"
+        }
+
+        // send the response to the user as success
+        return res.status(200).json({ status: 200, message });
+        
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // exporting all the controllers functions
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, logoutUser };
