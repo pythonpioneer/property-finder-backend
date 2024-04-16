@@ -26,8 +26,9 @@ app.use(`${APIPATH}/health`, (_, res) => {
     return res.status(200).json({ status: 200, message: "Server is up and running!" });
 });
 
-// all available routes for the API
+// all available routes for the API, path: /api/v1
 app.use(`${APIPATH}/user`, require('./routes/user'));
+app.use(`${APIPATH}/property`, require('./routes/property'));
 
 // executing the app
 app.listen(PORT, () => {
