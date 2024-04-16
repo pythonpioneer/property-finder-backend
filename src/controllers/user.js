@@ -103,6 +103,21 @@ const logoutUser = async (req, res) => {
     }
 }
 
+// to fetch the logged in user details
+const getUserDetails = async (req, res) => {
+    try {
+        // check that the user exist or not
+        const user = await User.findById(req.user.id).select('-password -likedProperties -refreshToken');
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found!" });
+
+        // send the user as response
+        return res.status(200).json({ status: 200, message: "User Found!", user });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // exporting all the controllers functions
-module.exports = { registerUser, loginUser, logoutUser };
+module.exports = { registerUser, loginUser, logoutUser, getUserDetails };
