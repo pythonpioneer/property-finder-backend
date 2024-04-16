@@ -64,11 +64,13 @@ location |||| String
 |---|---|---|
 | post | /user/register | To register user |
 | post | /user/login | To login user |
+| get | /user/ | To get the particular user |
 | delete | /user/logout | To logout the user |
 | patch | /user/contact | To update the user, includes name, email and mobile |
 | patch | /user/type | To update the user type |
 | patch | /user/:propertyId/like | To like property |
 | delete | /user/:propertyId/like | To unlike the property |
+| get | /user/properties | To get the all properties liked by logged in user |
 
 
 ### PROPERTY
@@ -76,9 +78,12 @@ location |||| String
 | METHOD | ENDPOINT | DESCRIPTION |
 |---|---|---|
 | post | /property/ | To add new property |
+| get | /property/:propertyId | To get the particular property |
 | put | /property/:propertyId | To update property |
 | patch | /property/:propertyId/other | To update the flooring and age |
 | patch | /property/:propertyId/images | To add more images |
 | delete | /property/:propertyId/images:imageid | To delete the image |
 | patch | /property/:propertyId/price | To update the price |
+| get | /property/properties | To get all properties, listed by any user |
+| get | /property/properties?owner=me | To fetch the all properties listed by logged in user |
 
