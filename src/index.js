@@ -3,6 +3,8 @@ const connectToMongo = require('./database');
 const express = require('express');
 const cors = require("cors");
 const { PORT, APIPATH } = require('./constants');
+const { urlencoded } = require('express');
+const cookieParser = require('cookie-parser');
 
 
 // connecting with mongodb atlas server
@@ -13,6 +15,8 @@ const app = express();
 
 // to use req.body, we have to use this middleware
 app.use(express.json());
+app.use(urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(cors({
     credentials: true,
 }));

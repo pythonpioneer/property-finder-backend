@@ -11,7 +11,7 @@ name |||| String
 email |||| String
 password |||| String
 userType |||| "owner/tenant"
-likedTo |||| [ _id, ... ]
+likedProperties |||| [ _id, ... ]
 contactNumber |||| String
 
 
