@@ -10,10 +10,16 @@ const enquirySchema = new Schema({
         required: true,
         max: [900, 'Name can not be longer than 900 characters.']
     },
-    sender: {
+    from: {
         type: Schema.Types.ObjectId,
         required: true,
-    }
+        index: true,
+    },
+    to: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        index: true,
+    },
 }, { timestamps: true });
 
 
