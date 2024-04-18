@@ -256,6 +256,31 @@ const likedProperties = async (req, res) => {
     }
 }
 
+// to fetch all properties listed by the loggedin user
+const fetchUserProperties = async (req, res) => {
+    try {
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // calculate the offset
+        let page = Number(req.params.page) || 1;
+        if (page <= 0) page = 1;
+
+        let limit = 10;
+        let skip = (page - 1) * limit;
+
+        // find all properties listed by user
+        const properties = await Property.find({ user: user._id }).skip(skip).limit(limit);
+        if (properties.length === 0) return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+
+        // send properties as success
+        return res.status(200).json({ status: 200, message: "All Properties listed by user", properties, page })
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
 
 // exporting all the controllers functions
 module.exports = {
@@ -266,5 +291,6 @@ module.exports = {
     updateContact,
     updateUserType,
     likeProperty,
-    likedProperties
+    likedProperties,
+    fetchUserProperties,
 };

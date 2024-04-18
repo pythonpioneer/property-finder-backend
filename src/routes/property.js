@@ -29,5 +29,6 @@ router.put('/:propertyId', validateUpdationPropertyFields, validateValidationRes
 router.patch('/:propertyId/price', validatePriceUpdate, validateValidationResult, fetchUser, updatePrice);
 
 
+
 // export all the routes
 module.exports = router;

@@ -83,6 +83,11 @@ const validatePriceUpdate = [
     ...validateMongoId(['propertyId'], false),
 ];
 
+// generate the validation array to validate the page number
+const validatePage = [
+    ...validateString(['page'], false, { max: 2 }, true)
+];
+
 
 // export all the validation array
 module.exports = { 
@@ -95,4 +100,5 @@ module.exports = {
     validateOtherUpdates,
     validateUpdationPropertyFields,
     validatePriceUpdate,
+    validatePage,
 };
