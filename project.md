@@ -85,5 +85,3 @@ location |||| String
 | patch | /property/:propertyId/images | To add more images |
 | delete | /property/:propertyId/ | To delete the property |
 | get | /property/properties | To get all properties, listed by any user |
-| get | /property/properties?owner=me | To fetch the all properties listed by logged in user |
-
