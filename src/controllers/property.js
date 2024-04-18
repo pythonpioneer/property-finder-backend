@@ -73,6 +73,46 @@ const fetchOneProperty = async (req, res) => {
     }
 }
 
+// to upload more images to property
+const addMoreImage = async (req, res) => {
+    try {
+        // fetch the image file and propertyId
+        const imageLocalPath = req.file?.path;
+        const propertyId = req.params.propertyId;
+
+        // find the user
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user is authorized to upload image
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // validate that we get the image on our server
+        if (!imageLocalPath) return res.status(400).json({ status: 400, message: "Image is required" });
+
+        // upload the image on cloudinary
+        const image = await uploadOnCloudinary(imageLocalPath);
+
+        // validate the image
+        if (!image) return res.status(400).json({ status: 400, message: "Image is required" });
+
+        // now, save the image url to the db
+        property.images.push(image.secure_url);
+        await property.save();
+
+        // image uploaded successfully, success response to user
+        return res.status(200).json({ status: 200, message: "Image Uploaded Successfully!", image: image.secure_url, images: property.images });
+        
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+};
+
+
 
 // export all the controllers
-module.exports = { addProperty, fetchOneProperty };
+module.exports = { addProperty, fetchOneProperty, addMoreImage };
