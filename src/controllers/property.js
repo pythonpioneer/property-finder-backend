@@ -153,7 +153,7 @@ const deleteProperty = async (req, res) => {
         if (!isImageDeleted) {
             return res.status(504).json({ status: 504, message: "Cloudinary could not delete the images." });
         }
-        
+
         // delete the property now
         await Property.findByIdAndDelete(propertyId);
 
@@ -245,8 +245,8 @@ const udpateProperty = async (req, res) => {
         const updatedProperty = await Property.findByIdAndUpdate(propertyId, { $set: propertyData }, { new: true });
 
         // now return the success response with updated user
-        return res.status(200).json({ status: 200, message: "Porperty Updated", property: updatedProperty});
-        
+        return res.status(200).json({ status: 200, message: "Porperty Updated", property: updatedProperty });
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
@@ -288,14 +288,66 @@ const updatePrice = async (req, res) => {
     }
 }
 
+// to fetch all properties listed by any user
+const fetchAllProperties = async (req, res) => {
+    try {
+        // Calculate the offset
+        let page = Number(req.params.page) || 1;
+        if (page <= 0) page = 1;
+
+        let limit = 10;
+        let skip = (page - 1) * limit;
+
+        // Construct filter object based on req.query parameters
+        const filter = {};
+
+        // Location filters
+        if (req.query.state) filter['location.state'] = req.query.state;
+        if (req.query.city) filter['location.city'] = req.query.city;
+        if (req.query.district) filter['location.district'] = req.query.district;
+        if (req.query.sector) filter['location.sector'] = req.query.sector;
+
+        // Price range filter
+        if (req.query.minPrice || req.query.maxPrice) {
+            filter['price.monthlyRent'] = {};
+            if (req.query.minPrice) filter['price.monthlyRent'].$gte = Number(req.query.minPrice);
+            if (req.query.maxPrice) filter['price.monthlyRent'].$lte = Number(req.query.maxPrice);
+        }
+
+        // Property type filter
+        if (req.query.propertyType) filter.propertyType = req.query.propertyType;
+
+        // Furnishing filter
+        if (req.query.furnishing) filter.furnishing = req.query.furnishing;
+
+        // Preferred tenant filter
+        if (req.query.preferredTenant) filter.preferredTenant = { $in: req.query.preferredTenant };
+
+        // Find properties based on filter and pagination
+        const properties = await Property.find(filter).skip(skip).limit(limit);
+
+        if (properties.length === 0) {
+            return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+        }
+
+        // Send properties as success
+        return res.status(200).json({ status: 200, message: "Filtered Properties", properties, page });
+
+    } catch (err) {
+        // Handle errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // export all the controllers
-module.exports = { 
-    addProperty, 
-    fetchOneProperty, 
-    addMoreImage, 
-    deleteProperty, 
-    updateOtherOptionalFields, 
-    udpateProperty, 
-    updatePrice 
+module.exports = {
+    addProperty,
+    fetchOneProperty,
+    addMoreImage,
+    deleteProperty,
+    updateOtherOptionalFields,
+    udpateProperty,
+    updatePrice,
+    fetchAllProperties,
 };

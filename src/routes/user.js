@@ -1,8 +1,8 @@
 // importing requirements
 const router = require('express').Router();
-const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType, likeProperty, likedProperties } = require('../controllers/user');
+const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType, likeProperty, likedProperties, fetchUserProperties } = require('../controllers/user');
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
-const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField, validateMongoDbObjectId } = require('../middlewares/validation/validationField');
+const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField, validateMongoDbObjectId, validatePage } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
 
 
@@ -30,6 +30,8 @@ router.patch('/:propertyId/like', validateMongoDbObjectId, validateValidationRes
 // Route 8: To fetch all liked properties: '/api/v1/user/liked-properties/' [using GET] (login required)
 router.get('/liked-properties', fetchUser, likedProperties);
 
+// Route 9: To fetch all properties listed by loggedin user: '/api/v1/user/properties?page=<page_number>&state=<state>&city=<city>&district=<district>&sector=<sector>&minPrice=<min_price>&maxPrice=<max_price>&propertyType=<property_type>&furnishing=<furnishing_type>&preferredTenant=<preferred_tenant>' [using GET] (login required)
+router.get('/properties', fetchUser, fetchUserProperties);
 
 
 // exporting the router object
