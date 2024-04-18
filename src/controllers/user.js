@@ -270,17 +270,47 @@ const fetchUserProperties = async (req, res) => {
         let limit = 10;
         let skip = (page - 1) * limit;
 
-        // find all properties listed by user
-        const properties = await Property.find({ user: user._id }).skip(skip).limit(limit);
-        if (properties.length === 0) return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+        // construct filter object based on req.query parameters
+        const filter = { user: user._id };
 
-        // send properties as success
-        return res.status(200).json({ status: 200, message: "All Properties listed by user", properties, page })
+        // location filters
+        if (req.query.state) filter['location.state'] = req.query.state;
+        if (req.query.city) filter['location.city'] = req.query.city;
+        if (req.query.district) filter['location.district'] = req.query.district;
+        if (req.query.sector) filter['location.sector'] = req.query.sector;
 
-    } catch (err) {  // unrecogonized errors
+        // rrice range filters
+        if (req.query.minPrice || req.query.maxPrice) {
+            filter['price.monthlyRent'] = {};
+            if (req.query.minPrice) filter['price.monthlyRent'].$gte = Number(req.query.minPrice);
+            if (req.query.maxPrice) filter['price.monthlyRent'].$lte = Number(req.query.maxPrice);
+        }
+
+        // property type filter
+        if (req.query.propertyType) filter.propertyType = req.query.propertyType;
+
+        // furnishing filter
+        if (req.query.furnishing) filter.furnishing = req.query.furnishing;
+
+        // preferred tenant filter
+        if (req.query.preferredTenant) filter.preferredTenant = { $in: req.query.preferredTenant };
+
+        // find properties based on filter and pagination
+        const properties = await Property.find(filter).skip(skip).limit(limit);
+
+        if (properties.length === 0) {
+            return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+        }
+
+        // Send properties as success
+        return res.status(200).json({ status: 200, message: "Filtered Properties", properties, page });
+
+    } catch (err) {
+        // Handle errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
 }
+
 
 // exporting all the controllers functions
 module.exports = {

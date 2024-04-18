@@ -31,7 +31,7 @@ router.patch('/:propertyId/like', validateMongoDbObjectId, validateValidationRes
 router.get('/liked-properties', fetchUser, likedProperties);
 
 // Route 9: To fetch all properties listed by loggedin user: '/api/v1/user/properties/page' [using GET] (login required)
-router.get('/properties/:page', validatePage, validateValidationResult, fetchUser, fetchUserProperties);
+router.get('/properties', fetchUser, fetchUserProperties);
 
 
 // exporting the router object
