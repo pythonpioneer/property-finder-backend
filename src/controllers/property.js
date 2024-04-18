@@ -2,6 +2,7 @@ const { Property } = require("../models/Property.model");
 const User = require("../models/User.model");
 const { uploadOnCloudinary } = require("../services/cloudinary");
 
+
 // to add a new property
 const addProperty = async (req, res) => {
     try {
@@ -17,6 +18,9 @@ const addProperty = async (req, res) => {
         // find the user
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // only owner can upload pics
+        if (user.userType !== 'owner') return res.status(403).json({ status: 403, message: "Permission Denied, Change your Role!!" });
 
         // validate that we get the image on our server
         if (!imageLocalPath) return res.status(400).json({ status: 400, message: "Image is required" });
@@ -51,5 +55,24 @@ const addProperty = async (req, res) => {
     }
 }
 
+// to fetch a single property
+const fetchOneProperty = async (req, res) => {
+    try {
+        // fetch the property id from params
+        const { propertyId } = req.params;
+
+        // check that the property exists
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // now, return the property 
+        return res.status(200).json({ status: 200, message: "Property Found", property });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+
 // export all the controllers
-module.exports = { addProperty };
+module.exports = { addProperty, fetchOneProperty };
