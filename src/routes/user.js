@@ -30,7 +30,7 @@ router.patch('/:propertyId/like', validateMongoDbObjectId, validateValidationRes
 // Route 8: To fetch all liked properties: '/api/v1/user/liked-properties/' [using GET] (login required)
 router.get('/liked-properties', fetchUser, likedProperties);
 
-// Route 9: To fetch all properties listed by loggedin user: '/api/v1/user/properties/page' [using GET] (login required)
+// Route 9: To fetch all properties listed by loggedin user: '/api/v1/user/properties?page=<page_number>&state=<state>&city=<city>&district=<district>&sector=<sector>&minPrice=<min_price>&maxPrice=<max_price>&propertyType=<property_type>&furnishing=<furnishing_type>&preferredTenant=<preferred_tenant>' [using GET] (login required)
 router.get('/properties', fetchUser, fetchUserProperties);
 
 
