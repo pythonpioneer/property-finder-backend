@@ -3,6 +3,60 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 
+// creating an address schema to simplify the location
+const addressSchema = new Schema({
+    state: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    district: {
+        type: String,
+        required: true
+    },
+    sector: {
+        type: String
+    },
+    block: {
+        type: String
+    },
+    zip: {
+        type: String,
+        required: true,
+    },
+    buildingName: {
+        type: String
+    }
+
+    // can add more address fields
+});
+
+
+// creating a price schema
+const priceSchema = new Schema({
+    monthlyRent: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    maintenanceCost: {
+        type: Number,
+        default: 0,
+    },
+    security: {
+        type: Number,
+        default: 0
+    },
+    brokerage: {
+        type: Number,
+        default: 0
+    }
+});
+
+
 // creating schema for Property
 const propertySchema = new Schema({
     user: {
@@ -55,59 +109,6 @@ const propertySchema = new Schema({
 }, { timestamps: true });
 
 
-// creating a price schema
-const priceSchema = new Schema({
-    monthlyRent: {
-        type: Number,
-        required: true,
-        min: 1
-    },
-    maintenanceCost: {
-        type: Number,
-        default: 0,
-    },
-    security: {
-        type: Number,
-        default: 0
-    },
-    brokerage: {
-        type: Number,
-        default: 0
-    }
-});
-
-// creating an address schema to simplify the location
-const addressSchema = new Schema({
-    state: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    district: {
-        type: String,
-        required: true
-    },
-    sector: {
-        type: String
-    },
-    block: {
-        type: String
-    },
-    zip: {
-        type: String,
-        required: true,
-    },
-    buildingName: {
-        type: String
-    }
-
-    // can add more address fields
-});
-
-
 // export the user model
 const Property = model('property', propertySchema);
-module.exports = Property;
+module.exports = { Property, addressSchema };

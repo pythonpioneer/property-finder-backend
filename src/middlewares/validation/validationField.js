@@ -43,7 +43,6 @@ const validatePropertyFields = [
     ...validateSpecificValues(['furnishing'], false, ['full', 'semi', 'un']),
     ...validateSpecificValues(['preferredTenant'], false, ['bachelors', 'married', 'girls', 'boys', 'family', 'studio', 'couples']),
     ...validateString(['area'], false, { max: 4 }, true),  // a number but validated through string
-    validateAddress('locatioin', false),
 
     // optional fields
     ...validateString(['flooring'], true, { max: 20 }),

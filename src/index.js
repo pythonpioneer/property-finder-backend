@@ -15,7 +15,7 @@ const app = express();
 
 // to use req.body, we have to use this middleware
 app.use(express.json());
-app.use(urlencoded({ extended: true }));
+app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({
     credentials: true,

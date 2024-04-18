@@ -17,6 +17,10 @@ const registerUser = async (req, res) => {
         const user = await User.findOne({ email });
         if (user) return res.status(400).json({ status: 400, message: "User with this email, already exists" });
 
+        // check that the contact exist
+        const contact = await User.findOne({ contactNumber });
+        if (contact) return res.status(400).json({ status: 400, message: "User with this contact, already exists" });
+
         // let's create an hashed password for the given password
         const securePassword = generatePassword(password);
 

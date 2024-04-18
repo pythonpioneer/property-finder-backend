@@ -1,39 +1,51 @@
-// import requirements
 const { check } = require('express-validator');
 
-
-// valdiate the address schema
+// Validate the address schema
 const validateAddress = (fieldName, isOptional) => {
-
-    // check that the field name is a string
     if (typeof fieldName !== 'string') throw new Error('Field name must be a string.');
 
-    // validate the field using the addressSchema
     const validationChain = check(fieldName, `Enter a valid ${fieldName}`);
 
-    // if optional flag is true, make the validation optional
     if (isOptional) validationChain.optional();
 
     return validationChain.custom((value, { req }) => {
+        const { state, city, district, zip, sector, block, buildingName } = value;
 
-        // check if the value matches the addressSchema
-        const { state, city, district, sector, block, zip, buildingName } = value;
-        if (
-            typeof state !== 'string' ||
-            typeof city !== 'string' ||
-            typeof district !== 'string' ||
-            (sector && typeof sector !== 'string') ||
-            (block && typeof block !== 'string') ||
-            typeof zip !== 'string' ||
-            (buildingName && typeof buildingName !== 'string')
-        ) {
-            throw new Error('Invalid address schema');
+        // Validate each field against its validation rules
+        if (!state || !city || !district || !zip) {
+            throw new Error('State, city, district, and zip are required fields');
         }
 
-        // return true if the value matches the schema
+        if (typeof state !== 'string' || state.trim() === '') {
+            throw new Error('State must be a non-empty string');
+        }
+
+        if (typeof city !== 'string' || city.trim() === '') {
+            throw new Error('City must be a non-empty string');
+        }
+
+        if (typeof district !== 'string' || district.trim() === '') {
+            throw new Error('District must be a non-empty string');
+        }
+
+        if (typeof zip !== 'string' || zip.trim() === '') {
+            throw new Error('Zip must be a non-empty string');
+        }
+
+        if (sector && typeof sector !== 'string') {
+            throw new Error('Sector must be a string');
+        }
+
+        if (block && typeof block !== 'string') {
+            throw new Error('Block must be a string');
+        }
+
+        if (buildingName && typeof buildingName !== 'string') {
+            throw new Error('Building name must be a string');
+        }
+
         return true;
     });
 };
 
-// export the validation middleware
 module.exports = { validateAddress };

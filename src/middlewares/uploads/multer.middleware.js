@@ -1,12 +1,13 @@
 // importing requirements
 const multer = require("multer");
+const path = require('path');
 
 
 // store the images using multer in diskstorage
-const storage = multer.diskStorage({
+const _storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
-        cb(null, "./public/temp")
+        cb(null, "./public/uploads")
     },
     filename: function (req, file, cb) {
         cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`);
