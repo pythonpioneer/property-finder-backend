@@ -164,7 +164,29 @@ const deleteProperty = async (req, res) => {
 // to update optional fiedls
 const updateOtherOptionalFields = async (req, res) => {
     try {
-        res.send("ok")
+        // fetch the propertyId, age and flooring
+        const propertyId = req.params.propertyId;
+        const { propertyAge, flooring } = req.body;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the user is authorized to delete the property
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // save the property details
+        property.propertyAge = propertyAge;
+        property.flooring = flooring.trim();
+        await property.save();
+
+        // after updating successfully, send success
+        return res.status(200).json({ status: 200, message: "Property Updated!", property });
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
