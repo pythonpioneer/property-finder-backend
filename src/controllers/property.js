@@ -281,7 +281,7 @@ const updatePrice = async (req, res) => {
         await property.save();
 
         // property price updated
-        return res.status(200).json({ status: 200, message: "Price updated successfully!", price: property.price })
+        return res.status(200).json({ status: 200, message: "Price updated successfully!", price: property.price, propertyId })
 
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
