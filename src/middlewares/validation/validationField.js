@@ -43,9 +43,6 @@ const validatePropertyFields = [
     validatePrice('price', false),
     ...validateSpecificValues(['propertyType'], false, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio']),
     ...validateSpecificValues(['furnishing'], false, ['full', 'semi', 'un']),
-
-    // validate 'preferredTenant' directly here
-    // ...validateArraySpecificValues(['preferredTenant'], false, ['bachelors', 'married', 'girls', 'boys', 'family', 'studio', 'couples']),
     ...validateString(['area'], false, { max: 4 }, true), // a number but validated through string
 
     // Optional fields
@@ -65,6 +62,21 @@ const validateOtherUpdates = [
     ...validateString(['propertyAge'], true, { max: 2 }, true),
 ];
 
+// genearat a validatioin array to validate property fields
+const validateUpdationPropertyFields = [
+
+    // required fields
+    ...validateString(['desc'], true, { min: 4, max: 300 }),
+    validatePrice('price', true),
+    ...validateSpecificValues(['propertyType'], true, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio']),
+    ...validateSpecificValues(['furnishing'], true, ['full', 'semi', 'un']),
+    ...validateString(['area'], true, { max: 4 }, true), // a number but validated through string
+
+    // Optional fields
+    ...validateString(['flooring'], true, { max: 20 }),
+    ...validateString(['propertyAge'], true, { max: 2 }, true), // a number but validated through string
+];
+
 
 // export all the validation array
 module.exports = { 
@@ -74,5 +86,6 @@ module.exports = {
     validateUserTypeField,
     validatePropertyFields,
     validateMongoDbObjectId,
-    validateOtherUpdates
+    validateOtherUpdates,
+    validateUpdationPropertyFields,
 };
