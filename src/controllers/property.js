@@ -18,6 +18,9 @@ const addProperty = async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
 
+        // only owner can upload pics
+        if (user.userType !== 'owner') return res.status(403).json({ status: 403, message: "Permission Denied, Change your Role!!" });
+
         // validate that we get the image on our server
         if (!imageLocalPath) return res.status(400).json({ status: 400, message: "Image is required" });
 
