@@ -1,9 +1,9 @@
 // importing requirements
 const router = require('express').Router();
-const { addProperty, fetchOneProperty, addMoreImage, deleteProperty, updateOtherOptionalFields, udpateProperty } = require('../controllers/property');
+const { addProperty, fetchOneProperty, addMoreImage, deleteProperty, updateOtherOptionalFields, udpateProperty, updatePrice } = require('../controllers/property');
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
 const { uploadImage } = require('../middlewares/uploads/multer.middleware');
-const { validatePropertyFields, validateMongoDbObjectId, validateOtherUpdates, validateUpdationPropertyFields } = require('../middlewares/validation/validationField');
+const { validatePropertyFields, validateMongoDbObjectId, validateOtherUpdates, validateUpdationPropertyFields, validatePriceUpdate } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
 
 
@@ -22,8 +22,12 @@ router.delete('/:propertyId', validateMongoDbObjectId, validateValidationResult,
 // Route 5: To update the age and flooring of the property: '/api/v1/property/:propertyId/other' [using PATCH] (login required)
 router.patch('/:propertyId/other', validateOtherUpdates, validateValidationResult, fetchUser, updateOtherOptionalFields);
 
-// Route 6: To add a new property: '/api/v1/property/' [using PUT] (login required)
+// Route 6: To update the property: '/api/v1/property/:propertyId' [using PUT] (login required)
 router.put('/:propertyId', validateUpdationPropertyFields, validateValidationResult, fetchUser, udpateProperty);
+
+// Route 6: To update the property price: '/api/v1/property/:propertyId/price' [using PATCH] (login required)
+router.patch('/:propertyId/price', validatePriceUpdate, validateValidationResult, fetchUser, updatePrice);
+
 
 
 // export all the routes

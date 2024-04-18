@@ -77,6 +77,12 @@ const validateUpdationPropertyFields = [
     ...validateString(['propertyAge'], true, { max: 2 }, true), // a number but validated through string
 ];
 
+// generate the validation array to validate the price fields
+const validatePriceUpdate = [
+    validatePrice('price', false),
+    ...validateMongoId(['propertyId'], false),
+];
+
 
 // export all the validation array
 module.exports = { 
@@ -88,4 +94,5 @@ module.exports = {
     validateMongoDbObjectId,
     validateOtherUpdates,
     validateUpdationPropertyFields,
+    validatePriceUpdate,
 };

@@ -252,6 +252,50 @@ const udpateProperty = async (req, res) => {
     }
 }
 
+// to update the price of the property
+const updatePrice = async (req, res) => {
+    try {
+        // fetch the propertyId, age and flooring
+        const propertyId = req.params.propertyId;
+        const price = req.body?.price;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the user is authorized to delete the property
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // update the user role as owner
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
+
+        // now, update the property price
+        property.price = price;
+        await property.save();
+
+        // property price updated
+        return res.status(200).json({ status: 200, message: "Price updated successfully!", price: property.price })
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // export all the controllers
-module.exports = { addProperty, fetchOneProperty, addMoreImage, deleteProperty, updateOtherOptionalFields, udpateProperty };
+module.exports = { 
+    addProperty, 
+    fetchOneProperty, 
+    addMoreImage, 
+    deleteProperty, 
+    updateOtherOptionalFields, 
+    udpateProperty, 
+    updatePrice 
+};
