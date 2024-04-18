@@ -43,9 +43,6 @@ const validatePropertyFields = [
     validatePrice('price', false),
     ...validateSpecificValues(['propertyType'], false, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio']),
     ...validateSpecificValues(['furnishing'], false, ['full', 'semi', 'un']),
-
-    // validate 'preferredTenant' directly here
-    // ...validateArraySpecificValues(['preferredTenant'], false, ['bachelors', 'married', 'girls', 'boys', 'family', 'studio', 'couples']),
     ...validateString(['area'], false, { max: 4 }, true), // a number but validated through string
 
     // Optional fields
@@ -58,6 +55,34 @@ const validateMongoDbObjectId = [
     ...validateMongoId(['propertyId'], false),
 ];
 
+// generate a validatioin array to vaidate mongo db object id and property age and property flooring
+const validateOtherUpdates = [
+    ...validateMongoId(['propertyId'], false),
+    ...validateString(['flooring'], true, { max: 20 }),
+    ...validateString(['propertyAge'], true, { max: 2 }, true),
+];
+
+// genearat a validatioin array to validate property fields
+const validateUpdationPropertyFields = [
+
+    // required fields
+    ...validateString(['desc'], true, { min: 4, max: 300 }),
+    validatePrice('price', true),
+    ...validateSpecificValues(['propertyType'], true, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio']),
+    ...validateSpecificValues(['furnishing'], true, ['full', 'semi', 'un']),
+    ...validateString(['area'], true, { max: 4 }, true), // a number but validated through string
+
+    // Optional fields
+    ...validateString(['flooring'], true, { max: 20 }),
+    ...validateString(['propertyAge'], true, { max: 2 }, true), // a number but validated through string
+];
+
+// generate the validation array to validate the price fields
+const validatePriceUpdate = [
+    validatePrice('price', false),
+    ...validateMongoId(['propertyId'], false),
+];
+
 
 // export all the validation array
 module.exports = { 
@@ -66,5 +91,8 @@ module.exports = {
     validateUpdationFields, 
     validateUserTypeField,
     validatePropertyFields,
-    validateMongoDbObjectId
+    validateMongoDbObjectId,
+    validateOtherUpdates,
+    validateUpdationPropertyFields,
+    validatePriceUpdate,
 };
