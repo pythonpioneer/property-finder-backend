@@ -103,7 +103,7 @@ const logoutUser = async (req, res) => {
 
         // send the response to the user as success
         return res.status(200).json({ status: 200, message });
-        
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
@@ -145,7 +145,7 @@ const updateContact = async (req, res) => {
 
             // check that the user with this email exists
             const newUser = await User.findOne({ contactNumber });
-            if (newUser) return res.status(400).json({ status: 400, message: "An User with this contact already exists"});
+            if (newUser) return res.status(400).json({ status: 400, message: "An User with this contact already exists" });
 
             updatedFields.contactNumber = contactNumber;
         }
@@ -153,7 +153,7 @@ const updateContact = async (req, res) => {
 
             // check that the user with this email exists
             const newUser = await User.findOne({ email });
-            if (newUser) return res.status(400).json({ status: 400, message: "An User with this email already exists"});
+            if (newUser) return res.status(400).json({ status: 400, message: "An User with this email already exists" });
 
             updatedFields.email = email.toLowerCase();
         }
@@ -162,7 +162,7 @@ const updateContact = async (req, res) => {
         let toBeUpdated = Object.keys(updatedFields).length > 0;
 
         // checking fields that need to be updated
-        if (!toBeUpdated) return res.status(204).json({ status: 204, message: "There is nothing to update"})
+        if (!toBeUpdated) return res.status(204).json({ status: 204, message: "There is nothing to update" })
 
         // update the fields
         Object.assign(user, updatedFields);
@@ -192,7 +192,7 @@ const updateUserType = async (req, res) => {
 
         // respond the user with success response
         return res.status(200).json({ status: 200, message: "User role updated", user });
-        
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
@@ -222,14 +222,35 @@ const likeProperty = async (req, res) => {
 
             // remove propertyId from the likedProperties array
             user.likedProperties.splice(propertyPosition, 1);
-        } 
+        }
 
         // now, save the user;
         user.save();
-        
+
         // property liked successfully
-        return res.status(200).json({ status: 200, message: propertyPosition + 1 ? "Liked": "Unliked", info: `User ${propertyPosition + 1 ? "Liked": "Unliked"} the property`, likedProperties: user.likedProperties })
-        
+        return res.status(200).json({ status: 200, message: propertyPosition + 1 ? "Liked" : "Unliked", info: `User ${propertyPosition + 1 ? "Liked" : "Unliked"} the property`, likedProperties: user.likedProperties })
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+// to fetch all the liked properties by the loggedin user
+const likedProperties = async (req, res) => {
+    try {
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // all liked properties id
+        const likedPropertiesId = user.likedProperties;
+
+        // now, fetch all the liked properties details from the Property collections
+        const likedPropertiesDetails = await Property.find({ _id: { $in: likedPropertiesId } });
+
+        // Return the details of liked properties
+        return res.status(200).json({ status: 200, likedProperties: likedPropertiesDetails });
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
@@ -237,12 +258,13 @@ const likeProperty = async (req, res) => {
 
 
 // exporting all the controllers functions
-module.exports = { 
-    registerUser, 
-    loginUser, 
-    logoutUser, 
-    getUserDetails, 
-    updateContact, 
+module.exports = {
+    registerUser,
+    loginUser,
+    logoutUser,
+    getUserDetails,
+    updateContact,
     updateUserType,
     likeProperty,
+    likedProperties
 };

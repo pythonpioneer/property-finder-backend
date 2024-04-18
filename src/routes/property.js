@@ -25,9 +25,8 @@ router.patch('/:propertyId/other', validateOtherUpdates, validateValidationResul
 // Route 6: To update the property: '/api/v1/property/:propertyId' [using PUT] (login required)
 router.put('/:propertyId', validateUpdationPropertyFields, validateValidationResult, fetchUser, udpateProperty);
 
-// Route 6: To update the property price: '/api/v1/property/:propertyId/price' [using PATCH] (login required)
+// Route 7: To update the property price: '/api/v1/property/:propertyId/price' [using PATCH] (login required)
 router.patch('/:propertyId/price', validatePriceUpdate, validateValidationResult, fetchUser, updatePrice);
-
 
 
 // export all the routes
