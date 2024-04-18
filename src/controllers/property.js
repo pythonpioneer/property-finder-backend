@@ -2,6 +2,7 @@ const { Property } = require("../models/Property.model");
 const User = require("../models/User.model");
 const { uploadOnCloudinary } = require("../services/cloudinary");
 
+
 // to add a new property
 const addProperty = async (req, res) => {
     try {
@@ -54,5 +55,24 @@ const addProperty = async (req, res) => {
     }
 }
 
+// to fetch a single property
+const fetchOneProperty = async (req, res) => {
+    try {
+        // fetch the property id from params
+        const { propertyId } = req.params;
+
+        // check that the property exists
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // now, return the property 
+        return res.status(200).json({ status: 200, message: "Property Found", property });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+
 // export all the controllers
-module.exports = { addProperty };
+module.exports = { addProperty, fetchOneProperty };
