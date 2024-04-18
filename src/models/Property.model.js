@@ -79,7 +79,7 @@ const propertySchema = new Schema({
     },
     propertyType: {
         type: String,
-        enum: ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk'],
+        enum: ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio'],
         required: true
     },
     furnishing: {
@@ -88,7 +88,7 @@ const propertySchema = new Schema({
         required: true
     },
     preferredTenant: [{
-        type: String,
+        type: [ String ],
         enum: ['bachelors', 'married', 'girls', 'boys', 'family', 'studio', 'couples'],
         required: true
     }],
