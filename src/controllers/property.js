@@ -8,7 +8,7 @@ const { fetchImageNames } = require("../utils");
 const addProperty = async (req, res) => {
     try {
         // fetch all the information from the request body
-        const { desc, propertyType, furnishing, area } = req.body;
+        const { desc, propertyType, furnishing, area, propertyAge, flooring } = req.body;
         const price = JSON.parse(req.body.price);
         const preferredTenant = JSON.parse(req.body.preferredTenant)
         const location = JSON.parse(req.body.location);
@@ -41,6 +41,8 @@ const addProperty = async (req, res) => {
             preferredTenant,
             area,
             location,
+            propertyAge,
+            flooring: flooring.trim(),
             user: user._id,
         })
             .then(property => {
