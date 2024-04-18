@@ -69,7 +69,6 @@ location |||| String
 | patch | /user/contact | To update the user, includes name, email and mobile |
 | patch | /user/type | To update the user type |
 | patch | /user/:propertyId/like | To like property |
-| delete | /user/:propertyId/like | To unlike the property |
 | get | /user/properties | To get the all properties liked by logged in user |
 
 

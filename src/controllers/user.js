@@ -1,6 +1,7 @@
 // importing requirements
 const { generateToken } = require("../middlewares/auth/authMiddleware");
 const { generatePassword, comparePassword } = require("../middlewares/auth/passwordMiddleware");
+const { Property } = require("../models/Property.model");
 const User = require("../models/User.model");
 
 
@@ -197,6 +198,51 @@ const updateUserType = async (req, res) => {
     }
 }
 
+// to like the property by logged in user
+const likeProperty = async (req, res) => {
+    try {
+        // fetch the property id from req
+        const propertyId = req.params.propertyId;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the property is already liked
+        const propertyPosition = user.likedProperties.indexOf(propertyId);
+
+        // now, if property is already liked then unlike else like it
+        if (propertyPosition === -1) {
+            user.likedProperties.push(propertyId);
+        } else {
+
+            // remove propertyId from the likedProperties array
+            user.likedProperties.splice(propertyPosition, 1);
+        } 
+
+        // now, save the user;
+        user.save();
+        
+        // property liked successfully
+        return res.status(200).json({ status: 200, message: propertyPosition + 1 ? "Liked": "Unliked", info: `User ${propertyPosition + 1 ? "Liked": "Unliked"} the property`, likedProperties: user.likedProperties })
+        
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // exporting all the controllers functions
-module.exports = { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType };
+module.exports = { 
+    registerUser, 
+    loginUser, 
+    logoutUser, 
+    getUserDetails, 
+    updateContact, 
+    updateUserType,
+    likeProperty,
+};
