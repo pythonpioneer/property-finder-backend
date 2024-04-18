@@ -1,6 +1,7 @@
 const { Property } = require("../models/Property.model");
 const User = require("../models/User.model");
-const { uploadOnCloudinary } = require("../services/cloudinary");
+const { uploadOnCloudinary, deleteMultipleImages } = require("../services/cloudinary");
+const { fetchImageNames } = require("../utils");
 
 
 // to add a new property
@@ -104,15 +105,60 @@ const addMoreImage = async (req, res) => {
         property.images.push(image.secure_url);
         await property.save();
 
+        // update the user role as owner
+        user.userType = "owner";
+        user.save();
+
         // image uploaded successfully, success response to user
         return res.status(200).json({ status: 200, message: "Image Uploaded Successfully!", image: image.secure_url, images: property.images });
-        
+
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
 };
 
+// to delete the property
+const deleteProperty = async (req, res) => {
+    try {
+        // fetch the propertyId
+        const propertyId = req.params.propertyId;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the user is authorized to delete the property
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // update the user role as owner, because user is trying to delete properties
+        user.userType = "owner";
+        user.save();
+
+        // fetching image names from the image array
+        const imageNames = fetchImageNames(property.images);
+
+        // now, delete all the images
+        const isImageDeleted = deleteMultipleImages(imageNames);
+
+        if (!isImageDeleted) {
+            return res.status(504).json({ status: 504, message: "Cloudinary could not delete the images." });
+        }
+        
+        // delete the property now
+        await Property.findByIdAndDelete(propertyId);
+
+        // send success response, after deleting the property
+        return res.status(200).json({ status: 200, message: "Property Deleted Successfully", propertyId });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
 
 
 // export all the controllers
-module.exports = { addProperty, fetchOneProperty, addMoreImage };
+module.exports = { addProperty, fetchOneProperty, addMoreImage, deleteProperty };
