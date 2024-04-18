@@ -11,8 +11,6 @@ const addProperty = async (req, res) => {
         const preferredTenant = JSON.parse(req.body.preferredTenant)
         const location = JSON.parse(req.body.location);
 
-        // validate location here..........................
-
         // fetching file
         const imageLocalPath = req.file?.path;
 
