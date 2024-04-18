@@ -159,6 +159,15 @@ const deleteProperty = async (req, res) => {
     }
 }
 
+// to update optional fiedls
+const updateOtherOptionalFields = async (req, res) => {
+    try {
+        res.send("ok")
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // export all the controllers
-module.exports = { addProperty, fetchOneProperty, addMoreImage, deleteProperty };
+module.exports = { addProperty, fetchOneProperty, addMoreImage, deleteProperty, updateOtherOptionalFields };

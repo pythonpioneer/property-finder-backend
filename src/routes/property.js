@@ -1,9 +1,9 @@
 // importing requirements
 const router = require('express').Router();
-const { addProperty, fetchOneProperty, addMoreImage, deleteProperty } = require('../controllers/property');
+const { addProperty, fetchOneProperty, addMoreImage, deleteProperty, updateOtherOptionalFields } = require('../controllers/property');
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
 const { uploadImage } = require('../middlewares/uploads/multer.middleware');
-const { validatePropertyFields, validateMongoDbObjectId } = require('../middlewares/validation/validationField');
+const { validatePropertyFields, validateMongoDbObjectId, validateOtherUpdates } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
 
 
@@ -18,6 +18,9 @@ router.patch('/:propertyId/images', uploadImage('image'), validateMongoDbObjectI
 
 // Route 4: To delete property: '/api/v1/property/:propertyId' [using DELETE] (login required)
 router.delete('/:propertyId', validateMongoDbObjectId, validateValidationResult, fetchUser, deleteProperty);
+
+// Route 5: To update the age and flooring of the property: '/api/v1/property/:propertyId/other' [using PATCH] (login required)
+router.patch('/:propertyId/other', validateOtherUpdates, validateValidationResult, fetchUser, updateOtherOptionalFields);
 
 
 // export all the routes
