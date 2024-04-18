@@ -33,5 +33,27 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
+// delete a image from cloudinary
+const _deleteImage = (image) => {
+    cloudinary.uploader.destroy(image, (error, result) => {
+        
+        // image deleted successfully, here
+        if (error) console.log(error);
+    });
+}
+
+// delete images from cloudinary
+const deleteMultipleImages = (images) => {
+
+    // traverse in the images and delete one by one
+    images.forEach(image => {
+        
+        _deleteImage(image);
+    });
+
+    // send confirmation after deleting all images
+    return true;
+}
+
 // export the cloudinary upload service
-module.exports = { uploadOnCloudinary };
+module.exports = { uploadOnCloudinary, deleteMultipleImages };
