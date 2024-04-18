@@ -8,7 +8,7 @@ const { fetchImageNames } = require("../utils");
 const addProperty = async (req, res) => {
     try {
         // fetch all the information from the request body
-        const { desc, propertyType, furnishing, area } = req.body;
+        const { desc, propertyType, furnishing, area, propertyAge, flooring } = req.body;
         const price = JSON.parse(req.body.price);
         const preferredTenant = JSON.parse(req.body.preferredTenant)
         const location = JSON.parse(req.body.location);
@@ -41,6 +41,8 @@ const addProperty = async (req, res) => {
             preferredTenant,
             area,
             location,
+            propertyAge,
+            flooring: flooring.trim(),
             user: user._id,
         })
             .then(property => {
@@ -106,8 +108,10 @@ const addMoreImage = async (req, res) => {
         await property.save();
 
         // update the user role as owner
-        user.userType = "owner";
-        user.save();
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
 
         // image uploaded successfully, success response to user
         return res.status(200).json({ status: 200, message: "Image Uploaded Successfully!", image: image.secure_url, images: property.images });
@@ -135,8 +139,10 @@ const deleteProperty = async (req, res) => {
         if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
 
         // update the user role as owner, because user is trying to delete properties
-        user.userType = "owner";
-        user.save();
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
 
         // fetching image names from the image array
         const imageNames = fetchImageNames(property.images);
@@ -159,6 +165,137 @@ const deleteProperty = async (req, res) => {
     }
 }
 
+// to update optional fiedls
+const updateOtherOptionalFields = async (req, res) => {
+    try {
+        // fetch the propertyId, age and flooring
+        const propertyId = req.params.propertyId;
+        const { propertyAge, flooring } = req.body;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the user is authorized to delete the property
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // update the user role as owner
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
+
+        // save the property details
+        property.propertyAge = propertyAge;
+        property.flooring = flooring.trim();
+        await property.save();
+
+        // after updating successfully, send success
+        return res.status(200).json({ status: 200, message: "Property Updated!", property });
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+// to update the property fields
+const udpateProperty = async (req, res) => {
+    try {
+        // fetch all the information from the request body
+        const { desc, propertyType, furnishing, area, propertyAge, flooring } = req.body;
+        const price = req.body?.price;
+        const preferredTenant = req.body?.preferredTenant
+        const location = req.body?.location;
+        const propertyId = req.params?.propertyId;
+
+        // find the user
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // update the user role as owner
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
+
+        // to store all the updated data
+        const propertyData = {
+            desc,
+            price,
+            propertyType,
+            furnishing,
+            preferredTenant,
+            area,
+        };
+
+        // check for the optional fields
+        if (flooring) propertyData.flooring;
+        if (propertyAge) propertyData.propertyAge;
+        if (location) propertyData.location;
+
+        // now, update the property
+        const updatedProperty = await Property.findByIdAndUpdate(propertyId, { $set: propertyData }, { new: true });
+
+        // now return the success response with updated user
+        return res.status(200).json({ status: 200, message: "Porperty Updated", property: updatedProperty});
+        
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
+// to update the price of the property
+const updatePrice = async (req, res) => {
+    try {
+        // fetch the propertyId, age and flooring
+        const propertyId = req.params.propertyId;
+        const price = req.body?.price;
+
+        // check that the property exists 
+        const property = await Property.findById(propertyId);
+        if (!property) return res.status(404).json({ status: 404, message: "Property Not Found" });
+
+        // check that the user exists
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
+
+        // check that the user is authorized to delete the property
+        if (user._id.toString() !== property.user.toString()) return res.status(403).json({ status: 403, message: "Unauthorized Access" });
+
+        // update the user role as owner
+        if (user.userType !== 'owner') {
+            user.userType = "owner";
+            user.save();
+        }
+
+        // now, update the property price
+        property.price = price;
+        await property.save();
+
+        // property price updated
+        return res.status(200).json({ status: 200, message: "Price updated successfully!", price: property.price })
+
+    } catch (err) {  // unrecogonized errors
+        return res.status(500).json({ message: "Internal Server Error!!", errors: err });
+    }
+}
+
 
 // export all the controllers
-module.exports = { addProperty, fetchOneProperty, addMoreImage, deleteProperty };
+module.exports = { 
+    addProperty, 
+    fetchOneProperty, 
+    addMoreImage, 
+    deleteProperty, 
+    updateOtherOptionalFields, 
+    udpateProperty, 
+    updatePrice 
+};
