@@ -5,6 +5,7 @@ const cors = require("cors");
 const { PORT, APIPATH } = require('./constants');
 const { urlencoded } = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 
 // connecting with mongodb atlas server
@@ -16,6 +17,7 @@ const app = express();
 // to use req.body, we have to use this middleware
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
@@ -26,8 +28,9 @@ app.use(`${APIPATH}/health`, (_, res) => {
     return res.status(200).json({ status: 200, message: "Server is up and running!" });
 });
 
-// all available routes for the API
+// all available routes for the API, path: /api/v1
 app.use(`${APIPATH}/user`, require('./routes/user'));
+app.use(`${APIPATH}/property`, require('./routes/property'));
 
 // executing the app
 app.listen(PORT, () => {

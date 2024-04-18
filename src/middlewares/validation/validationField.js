@@ -2,6 +2,9 @@
 
 const { validateEmail } = require("./validateFields/emailField");
 const { validateString } = require("./validateFields/stringField");
+const { validateAddress } = require("./validateFields/validateAddress");
+const { validateArraySpecificValues } = require("./validateFields/validateArraySpecificValues");
+const { validatePrice } = require("./validateFields/validatePrice");
 const { validateSpecificValues } = require("./validateFields/validateSpecificValues");
 
 
@@ -31,5 +34,31 @@ const validateUserTypeField = [
     ...validateSpecificValues(['userType'], false, ['tenant', 'owner']),
 ];
 
+// genearat a validatioin array to validate property fields
+const validatePropertyFields = [
+
+    // required fields
+    ...validateString(['desc'], false, { min: 4, max: 300 }),
+    validatePrice('price', false),
+    ...validateSpecificValues(['propertyType'], false, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk']),
+    ...validateSpecificValues(['furnishing'], false, ['full', 'semi', 'un']),
+
+    // validate 'preferredTenant' directly here
+    // ...validateArraySpecificValues(['preferredTenant'], false, ['bachelors', 'married', 'girls', 'boys', 'family', 'studio', 'couples']),
+    ...validateString(['area'], false, { max: 4 }, true), // a number but validated through string
+
+    // Optional fields
+    ...validateString(['flooring'], true, { max: 20 }),
+    ...validateString(['propertyAge'], true, { max: 2 }, true), // a number but validated through string
+];
+
+
+
 // export all the validation array
-module.exports = { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField };
+module.exports = { 
+    validateRegistrationFields, 
+    validateLoginFields, 
+    validateUpdationFields, 
+    validateUserTypeField,
+    validatePropertyFields,
+};

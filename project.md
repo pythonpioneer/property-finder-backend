@@ -83,6 +83,7 @@ location |||| String
 | patch | /property/:propertyId/other | To update the flooring and age |
 | patch | /property/:propertyId/images | To add more images |
 | delete | /property/:propertyId/images:imageid | To delete the image |
+| delete | /property/:propertyId/ | To delete the property |
 | patch | /property/:propertyId/price | To update the price |
 | get | /property/properties | To get all properties, listed by any user |
 | get | /property/properties?owner=me | To fetch the all properties listed by logged in user |

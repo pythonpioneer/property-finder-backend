@@ -4,7 +4,6 @@ const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, upda
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
 const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
-const { validate } = require('../models/User.model');
 
 
 // Route 1: To register user: '/api/v1/user/register' [using POST] (login not required)
