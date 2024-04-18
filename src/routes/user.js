@@ -1,8 +1,8 @@
 // importing requirements
 const router = require('express').Router();
-const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType } = require('../controllers/user');
+const { registerUser, loginUser, logoutUser, getUserDetails, updateContact, updateUserType, likeProperty } = require('../controllers/user');
 const { fetchUser } = require('../middlewares/auth/authMiddleware');
-const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField } = require('../middlewares/validation/validationField');
+const { validateRegistrationFields, validateLoginFields, validateUpdationFields, validateUserTypeField, validateMongoDbObjectId } = require('../middlewares/validation/validationField');
 const validateValidationResult = require('../middlewares/validation/validationMiddleware');
 
 
@@ -23,6 +23,9 @@ router.patch('/contact', validateUpdationFields, validateValidationResult, fetch
 
 // Route 6: To update the logged in user type: '/api/v1/user/type' [using PATCH] (login required)
 router.patch('/type', validateUserTypeField, validateValidationResult, fetchUser, updateUserType);
+
+// Route 7: To like the property: '/api/v1/user/:propertyId/like' [using PATCH] (login required)
+router.patch('/:propertyId/like', validateMongoDbObjectId, validateValidationResult, fetchUser, likeProperty);
 
 
 // exporting the router object
