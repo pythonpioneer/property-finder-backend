@@ -1,6 +1,7 @@
 // importing all requirements
 
 const { validateEmail } = require("./validateFields/emailField");
+const { validateMongoId } = require("./validateFields/mongoField");
 const { validateString } = require("./validateFields/stringField");
 const { validateAddress } = require("./validateFields/validateAddress");
 const { validateArraySpecificValues } = require("./validateFields/validateArraySpecificValues");
@@ -52,6 +53,10 @@ const validatePropertyFields = [
     ...validateString(['propertyAge'], true, { max: 2 }, true), // a number but validated through string
 ];
 
+// generate a validatioin array to vaidate mongo db object id
+const validateMongoDbObjectId = [
+    ...validateMongoId(['propertyId'], false),
+];
 
 
 // export all the validation array
@@ -61,4 +66,5 @@ module.exports = {
     validateUpdationFields, 
     validateUserTypeField,
     validatePropertyFields,
+    validateMongoDbObjectId
 };
