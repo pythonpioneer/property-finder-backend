@@ -52,3 +52,34 @@ password: hrk123
   To verify the port run this command on your browser
   
       http://localhost:4000/api/v1/health
+
+
+## Frontend Setup
+
+- Clone the frontend repo
+
+      https://github.com/pythonpioneer/property-finder-frontend.git
+
+- Go to your project folder and install dependencies (make sure you have npm and node)
+
+  ```
+  cd property-finder-frontend
+  ```
+  ```
+  npm install
+  ```
+  
+- Create a `.env` file at root directory (same as `.env.sample`)
+
+   Copy this data and paste it in `.env`
+  
+  ```
+  REACT_APP_URL=http://localhost:4000
+  ```
+
+- After installation, To start the app
+
+      npm start
+
+- It will run on port 3000
+  
