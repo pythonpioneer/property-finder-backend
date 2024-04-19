@@ -313,7 +313,7 @@ const fetchAllProperties = async (req, res) => {
         }
 
         // property type filter
-        if (req.query.propertyType) filter.propertyType = req.query.propertyType;
+        if (req.query.propertyType) filter.propertyType = req.query.propertyType[0] + " bhk";
 
         // furnishing filter
         if (req.query.furnishing) filter.furnishing = req.query.furnishing;
