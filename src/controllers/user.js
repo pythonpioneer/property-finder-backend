@@ -61,6 +61,9 @@ const loginUser = async (req, res) => {
         const isPasswordMatched = comparePassword(password, user.password);
         if (!isPasswordMatched) return res.status(401).json({ status: 401, message: "Invalid Credentials!" });  // password not matched
 
+        // return the already generated token
+        if (user.refreshToken) return res.status(200).json({ status: 200, message: 'User Logged-in Successfully', "auth-token": user.refreshToken, likedProperties: user.likedProperties });
+
         // now, sending user id as payload, accesssing data using id is easier
         const payloadData = {
             user: {
