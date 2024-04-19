@@ -263,13 +263,6 @@ const fetchUserProperties = async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ status: 404, message: "User Not Found" });
 
-        // calculate the offset
-        let page = Number(req.params.page) || 1;
-        if (page <= 0) page = 1;
-
-        let limit = 10;
-        let skip = (page - 1) * limit;
-
         // construct filter object based on req.query parameters
         const filter = { user: user._id };
 
@@ -279,7 +272,7 @@ const fetchUserProperties = async (req, res) => {
         if (req.query.district) filter['location.district'] = req.query.district;
         if (req.query.sector) filter['location.sector'] = req.query.sector;
 
-        // rrice range filters
+        // price range filters
         if (req.query.minPrice || req.query.maxPrice) {
             filter['price.monthlyRent'] = {};
             if (req.query.minPrice) filter['price.monthlyRent'].$gte = Number(req.query.minPrice);
@@ -295,21 +288,26 @@ const fetchUserProperties = async (req, res) => {
         // preferred tenant filter
         if (req.query.preferredTenant) filter.preferredTenant = { $in: req.query.preferredTenant };
 
-        // find properties based on filter and pagination
-        const properties = await Property.find(filter).skip(skip).limit(limit);
-
-        if (properties.length === 0) {
-            return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+        // text search filter
+        if (req.query.search) {
+            filter.$text = { $search: req.query.search };
         }
 
-        // Send properties as success
-        return res.status(200).json({ status: 200, message: "Filtered Properties", properties, page });
+        // find properties based on filter
+        const properties = await Property.find(filter);
 
-    } catch (err) {
-        // Handle errors
+        if (properties.length === 0) {
+            return res.status(200).json({ status: 200, message: "No Data to Display", properties });
+        }
+
+        // send properties as success
+        return res.status(200).json({ status: 200, message: "Filtered Properties", properties });
+
+    } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
     }
 }
+
 
 
 // exporting all the controllers functions
