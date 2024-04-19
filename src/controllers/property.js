@@ -42,7 +42,7 @@ const addProperty = async (req, res) => {
             area,
             location,
             propertyAge,
-            flooring: flooring.trim(),
+            flooring: flooring?.trim(),
             user: user._id,
         })
             .then(property => {
@@ -288,49 +288,50 @@ const updatePrice = async (req, res) => {
     }
 }
 
-// to fetch all properties listed by any user
+// Update the fetchAllProperties method to include text search
 const fetchAllProperties = async (req, res) => {
     try {
-        // Calculate the offset
+        // calculate the offset
         let page = Number(req.params.page) || 1;
-        if (page <= 0) page = 1;
 
-        let limit = 10;
-        let skip = (page - 1) * limit;
-
-        // Construct filter object based on req.query parameters
+        // construct filter object based on req.query parameters
         const filter = {};
 
-        // Location filters
+        // location filters
         if (req.query.state) filter['location.state'] = req.query.state;
         if (req.query.city) filter['location.city'] = req.query.city;
         if (req.query.district) filter['location.district'] = req.query.district;
         if (req.query.sector) filter['location.sector'] = req.query.sector;
 
-        // Price range filter
+        // price range filter
         if (req.query.minPrice || req.query.maxPrice) {
             filter['price.monthlyRent'] = {};
             if (req.query.minPrice) filter['price.monthlyRent'].$gte = Number(req.query.minPrice);
             if (req.query.maxPrice) filter['price.monthlyRent'].$lte = Number(req.query.maxPrice);
         }
 
-        // Property type filter
+        // property type filter
         if (req.query.propertyType) filter.propertyType = req.query.propertyType;
 
-        // Furnishing filter
+        // furnishing filter
         if (req.query.furnishing) filter.furnishing = req.query.furnishing;
 
-        // Preferred tenant filter
+        // preferred tenant filter
         if (req.query.preferredTenant) filter.preferredTenant = { $in: req.query.preferredTenant };
 
-        // Find properties based on filter and pagination
-        const properties = await Property.find(filter).skip(skip).limit(limit);
+        // text search filter
+        if (req.query.search) {
+            filter.$text = { $search: req.query.search };
+        }
+
+        // find properties based on filter and pagination
+        const properties = await Property.find(filter);
 
         if (properties.length === 0) {
             return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
         }
 
-        // Send properties as success
+        // send properties as success
         return res.status(200).json({ status: 200, message: "Filtered Properties", properties, page });
 
     } catch (err) {

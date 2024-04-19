@@ -11,7 +11,6 @@ const addressSchema = new Schema({
     },
     city: {
         type: String,
-        required: true
     },
     district: {
         type: String,
@@ -107,6 +106,9 @@ const propertySchema = new Schema({
         required: true
     }
 }, { timestamps: true });
+
+// Index the 'desc' field for text search
+propertySchema.index({ desc: 'text' });
 
 
 // export the user model

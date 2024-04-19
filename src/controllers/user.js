@@ -76,7 +76,7 @@ const loginUser = async (req, res) => {
         await user.save();
 
         // return the response to the user as success
-        return res.status(200).json({ status: 200, message: 'User Logged-in Successfully', "auth-token": authToken });
+        return res.status(200).json({ status: 200, message: 'User Logged-in Successfully', "auth-token": authToken, likedProperties: user.likedProperties });
 
     } catch (err) {  // unrecogonized errors
         return res.status(500).json({ message: "Internal Server Error!!", errors: err });
