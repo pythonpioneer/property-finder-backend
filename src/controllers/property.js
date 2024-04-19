@@ -9,10 +9,12 @@ const addProperty = async (req, res) => {
     try {
         // fetch all the information from the request body
         const { desc, propertyType, furnishing, area, propertyAge, flooring } = req.body;
-        const price = JSON.parse(req.body.price);
-        const preferredTenant = JSON.parse(req.body.preferredTenant)
-        const location = JSON.parse(req.body.location);
 
+        // if using post man and browser
+        const price = typeof(req.body.price) === String ? JSON.parse(req.body.price) : req.body.price;
+        const preferredTenant = typeof(req.body.preferredTenant) === String ? JSON.parse(req.body.preferredTenant) : req.body.preferredTenant;
+        const location = typeof(req.body.location) === String ? JSON.parse(req.body.location) : req.body.location;
+        
         // fetching file
         const imageLocalPath = req.file?.path;
 

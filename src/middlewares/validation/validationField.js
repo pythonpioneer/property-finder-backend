@@ -40,7 +40,7 @@ const validatePropertyFields = [
 
     // required fields
     ...validateString(['desc'], false, { min: 4, max: 300 }),
-    validatePrice('price', false),
+    // validatePrice('price', false),
     ...validateSpecificValues(['propertyType'], false, ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio']),
     ...validateSpecificValues(['furnishing'], false, ['full', 'semi', 'un']),
     ...validateString(['area'], false, { max: 4 }, true), // a number but validated through string
