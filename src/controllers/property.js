@@ -327,10 +327,19 @@ const fetchAllProperties = async (req, res) => {
         }
 
         // find properties based on filter and pagination
-        const properties = await Property.find(filter);
+        let properties = await Property.find(filter);
+        let owner;
+
+        // now, fetch the user, who listed this property
+        properties = await Promise.all(properties.map(async (property) => {
+            const owner = await User.findById(property.user, { email: 1, contactNumber: 1, name: 1, _id: 0 });
+            property = property.toObject();
+            property.owner = owner;
+            return property;
+        }));
 
         if (properties.length === 0) {
-            return res.status(200).json({ status: 200, message: "No Data to Display", properties, page });
+            return res.status(200).json({ status: 200, message: "No Data to Display", properties, page, owner });
         }
 
         // send properties as success
