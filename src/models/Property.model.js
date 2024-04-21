@@ -61,6 +61,7 @@ const propertySchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         required: true,
+        index: true,
     },
     images: {  // cloudinary uri
         type: [ String ],
