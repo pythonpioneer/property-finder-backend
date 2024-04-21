@@ -5,19 +5,22 @@ const { Schema, model } = mongoose;
 
 // creating an address schema to simplify the location
 const addressSchema = new Schema({
-    state: {
+    state: {  // rare seraching on this field
         type: String,
         required: true
     },
     city: {
         type: String,
+        index: true,
     },
     district: {
         type: String,
-        required: true
+        required: true,
+        index: true,
     },
     sector: {
-        type: String
+        type: String,
+        index: true,
     },
     block: {
         type: String
@@ -30,7 +33,7 @@ const addressSchema = new Schema({
         type: String
     }
 
-    // can add more address fields
+    // we can add more address fields
 });
 
 
@@ -39,7 +42,8 @@ const priceSchema = new Schema({
     monthlyRent: {
         type: Number,
         required: true,
-        min: 1
+        min: 1,
+        index: true,
     },
     maintenanceCost: {
         type: Number,
@@ -67,25 +71,27 @@ const propertySchema = new Schema({
         type: [ String ],
         required: true,
     },
-    desc: {
+    desc: {  // indexing enabled
         type: String,
         required: true,
         min: [4, 'Description must be atleast 4 characters long.'],
         max: [300, 'Description can not be longer than 300 characters.']
     },
-    price: {
+    price: {  // indexing enabled on the price schema
         type: priceSchema,
-        required: true
+        required: true,
     },
     propertyType: {
         type: String,
         enum: ['1 bhk', '2 bhk', '3 bhk', '4 bhk', '5 bhk', 'studio'],
-        required: true
+        required: true,
+        index: true,
     },
     furnishing: {
         type: String,
         enum: ['full', 'semi', 'un'],
-        required: true
+        required: true,
+        index: true,
     },
     preferredTenant: [{
         type: [ String ],
